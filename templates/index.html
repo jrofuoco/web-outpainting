@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outpaint Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            margin: 20px 0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.save-btn {
+            background-color: #2196F3;
+            display: none;
+        }
+        button.save-btn:hover {
+            background-color: #0b7dda;
+        }
+        .output-image {
+            margin-top: 20px;
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .timer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            display: none;
+        }
+        .error-message {
+            color: #f44336;
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        .result-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload Image for Outpainting</h2>
+    <form id="outpaint-form" enctype="multipart/form-data">
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <button type="submit">Submit Image</button>
+    </form>
+
+    <div id="loading" class="loading">Processing image, please wait...</div>
+    <div id="timer" class="timer">Time elapsed: 0 seconds</div>
+    <div id="error-message" class="error-message"></div>
+
+    <div id="result-container" class="result-container">
+        <h3>Result</h3>
+        <img id="output-image" class="output-image" src="" alt="Outpaint Result">
+        <button id="save-btn" class="save-btn">Save Image</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('outpaint-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const imageFile = document.getElementById('image').files[0];
+        if (!imageFile) {
+            showError('Please select an image to upload');
+            return;
+        }
+
+        // Show loading indicator and timer
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('timer').style.display = 'block';
+        document.getElementById('error-message').style.display = 'none';
+        document.getElementById('output-image').style.display = 'none';
+        document.getElementById('save-btn').style.display = 'none';
+
+        // Start timer
+        let seconds = 0;
+        const timerElement = document.getElementById('timer');
+        const timerInterval = setInterval(function() {
+            seconds++;
+            timerElement.textContent = `Time elapsed: ${seconds} seconds`;
+        }, 1000);
+
+        const formData = new FormData();
+        formData.append('image', imageFile);
+
+        // Make the POST request to the Flask server
+        fetch('/outpaint', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            clearInterval(timerInterval);
+            
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error || 'Server error occurred');
+                });
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Hide loading indicator and timer
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            
+            // Display the result image
+            const outputImage = document.getElementById('output-image');
+            const url = URL.createObjectURL(blob);
+            outputImage.src = url;
+            outputImage.style.display = 'block';
+            
+            // Show save button
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.style.display = 'block';
+            
+            // Set up save button functionality
+            saveBtn.onclick = function() {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'outpainted-image.webp';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            clearInterval(timerInterval);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            showError(error.message || 'Something went wrong!');
+        });
+    });
+
+    function showError(message) {
+        const errorElement = document.getElementById('error-message');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
