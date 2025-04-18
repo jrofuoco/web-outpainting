@@ -1,243 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Outpaint Image Upload</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Outpaint Image Upload</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-    .container {
-      background: #fff;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 460px;
-      position: relative;
-      transition: all 0.3s ease;
-    }
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
 
-    .made-by {
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
-      color: #999;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
+        .made-by {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #999;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-    h2 {
-      margin-bottom: 24px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: 600;
-      color: #222;
-    }
+        .powered-by {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #999999a7;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-    input[type="file"] {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      border: 2px dashed #d0d0d0;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: border-color 0.3s ease;
-    }
+        h2 {
+            margin-bottom: 24px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #222;
+            padding-top: 50px;
+        }
 
-    input[type="file"]:hover {
-      border-color: #4caf50;
-    }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #d0d0d0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
 
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+        input[type="file"]:hover {
+            border-color: #4caf50;
+        }
 
-    button[type="submit"] {
-      background-color: #4caf50;
-      color: white;
-      margin-bottom: 10px;
-    }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    button[type="submit"]:hover {
-      background-color: #3e9441;
-    }
+        button[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            margin-bottom: 10px;
+        }
 
-    .save-btn {
-      background-color: #2196f3;
-      color: white;
-      display: none;
-    }
+        button[type="submit"]:hover {
+            background-color: #3e9441;
+        }
 
-    .save-btn:hover {
-      background-color: #1976d2;
-    }
+        .save-btn {
+            background-color: #2196f3;
+            color: white;
+            display: none;
+        }
 
-    .output-image {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      margin-top: 20px;
-      display: none;
-      border: 1px solid #e0e0e0;
-    }
+        .save-btn:hover {
+            background-color: #1976d2;
+        }
 
-    .loading,
-    .timer,
-    .error-message {
-      text-align: center;
-      font-size: 15px;
-      margin-top: 16px;
-      display: none;
-    }
+        .output-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            border: 1px solid #e0e0e0;
+        }
 
-    .loading {
-      color: #777;
-    }
+        .loading,
+        .timer,
+        .error-message {
+            text-align: center;
+            font-size: 15px;
+            margin-top: 16px;
+            display: none;
+        }
 
-    .timer {
-      color: #555;
-      font-weight: 600;
-    }
+        .loading {
+            color: #777;
+        }
 
-    .error-message {
-      color: #f44336;
-      font-weight: 500;
-    }
+        .timer {
+            color: #555;
+            font-weight: 600;
+        }
 
-    .result-container {
-      margin-top: 20px;
-    }
+        .error-message {
+            color: #f44336;
+            font-weight: 500;
+        }
 
-    h3 {
-      text-align: center;
-      font-size: 18px;
-      color: #333;
-    }
-  </style>
+        .result-container {
+            margin-top: 20px;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            button[type="submit"] {
+                font-size: 14px;
+            }
+
+            .save-btn {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="made-by">Made by Dua</div>
-  <div class="made-by">Powered by a model from the AlimamaCreative Team</div>
-  <h2>Upload Image to Expand your Image</h2>
+    <div class="container">
+        <div class="made-by">Made by Dua</div>
+        <div class="powered-by">Powered by a model from the AlimamaCreative Team</div>
+        <h2 style="top: 10px;">Upload Image to Expand your Image</h2>
 
-  <form id="outpaint-form" enctype="multipart/form-data">
-    <input type="file" id="image" name="image" accept="image/*" required />
-    <button type="submit">Submit Image</button>
-  </form>
+        <form id="outpaint-form" enctype="multipart/form-data">
+            <input type="file" id="image" name="image" accept="image/*" required />
+            <button type="submit">Submit Image</button>
+        </form>
 
-  <div id="loading" class="loading">Processing image, please wait...</div>
-  <div id="timer" class="timer">Time elapsed: 0 seconds</div>
-  <div id="error-message" class="error-message"></div>
+        <div id="loading" class="loading">Processing image, please wait...</div>
+        <div id="timer" class="timer">Time elapsed: 0 seconds</div>
+        <div id="error-message" class="error-message"></div>
 
-  <div id="result-container" class="result-container">
-    <h3>Result</h3>
-    <img id="output-image" class="output-image mb-2" src="" alt="Outpaint Result" />
-    <button id="save-btn" class="save-btn">Save Image</button>
-  </div>
-</div>
+        <div id="result-container" class="result-container">
+            <h3>Result</h3>
+            <img id="output-image" class="output-image mb-2" src="" alt="Outpaint Result" />
+            <button id="save-btn" class="save-btn">Save Image</button>
+        </div>
 
-<script>
-  document.getElementById('outpaint-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    const imageFile = document.getElementById('image').files[0];
-    if (!imageFile) {
-      showError('Please select an image to upload');
-      return;
-    }
+    </div>
 
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('timer').style.display = 'block';
-    document.getElementById('error-message').style.display = 'none';
-    document.getElementById('output-image').style.display = 'none';
-    document.getElementById('save-btn').style.display = 'none';
+    <script>
+        document.getElementById('outpaint-form').addEventListener('submit', function (event) {
+            event.preventDefault();
 
-    let seconds = 0;
-    const timerElement = document.getElementById('timer');
-    const timerInterval = setInterval(() => {
-      seconds++;
-      timerElement.textContent = `Time elapsed: ${seconds} seconds`;
-    }, 1000);
+            const imageFile = document.getElementById('image').files[0];
+            if (!imageFile) {
+                showError('Please select an image to upload');
+                return;
+            }
 
-    const formData = new FormData();
-    formData.append('image', imageFile);
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('timer').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('output-image').style.display = 'none';
+            document.getElementById('save-btn').style.display = 'none';
 
-    fetch('/outpaint', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => {
-      clearInterval(timerInterval);
-      if (!response.ok) {
-        return response.json().then(err => {
-          throw new Error(err.error || 'Server error occurred');
+            let seconds = 0;
+            const timerElement = document.getElementById('timer');
+            const timerInterval = setInterval(() => {
+                seconds++;
+                timerElement.textContent = `Time elapsed: ${seconds} seconds`;
+            }, 1000);
+
+            const formData = new FormData();
+            formData.append('image', imageFile);
+
+            fetch('/outpaint', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    clearInterval(timerInterval);
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Server error occurred');
+                        });
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('timer').style.display = 'none';
+
+                    const outputImage = document.getElementById('output-image');
+                    const url = URL.createObjectURL(blob);
+                    outputImage.src = url;
+                    outputImage.style.display = 'block';
+
+                    const saveBtn = document.getElementById('save-btn');
+                    saveBtn.style.display = 'block';
+                    saveBtn.onclick = () => {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'outpainted-image.webp';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    };
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    clearInterval(timerInterval);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('timer').style.display = 'none';
+                    showError(error.message || 'Something went wrong!');
+                });
         });
-      }
-      return response.blob();
-    })
-    .then(blob => {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('timer').style.display = 'none';
 
-      const outputImage = document.getElementById('output-image');
-      const url = URL.createObjectURL(blob);
-      outputImage.src = url;
-      outputImage.style.display = 'block';
-
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.style.display = 'block';
-      saveBtn.onclick = () => {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'outpainted-image.webp';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      };
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      clearInterval(timerInterval);
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('timer').style.display = 'none';
-      showError(error.message || 'Something went wrong!');
-    });
-  });
-
-  function showError(message) {
-    const errorElement = document.getElementById('error-message');
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-  }
-</script>
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    </script>
 
 </body>
+
 </html>
