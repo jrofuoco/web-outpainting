@@ -14,7 +14,7 @@ CORS(app)  # Enable CORS for all routes
 
 # Initialize the Gradio client with your Hugging Face token
 HF_TOKEN = "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"
-client = Client("multimodalart/flux-fill-outpaint", hf_token=HF_TOKEN)
+client = Client("jallenjia/flux-fill-outpaint", hf_token=HF_TOKEN)
 
 # Create template directory and HTML file
 os.makedirs('templates', exist_ok=True)
