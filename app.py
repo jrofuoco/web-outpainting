@@ -123,9 +123,9 @@ def outpaint():
         
         # Run Gradio client
         try:
-            # Step 1: Upload the image
+            # Step 1: Upload the image using use_output_as_input
             client.predict(
-                handle_file(input_tmp),
+                output_image=handle_file(input_tmp),
                 api_name="/use_output_as_input"
             )
             
